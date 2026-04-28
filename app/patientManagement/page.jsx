@@ -16,7 +16,7 @@ export default function PatientManagement() {
     return (
         <div className="min-h-screen bg-slate-50 flex">
             <div className="w-64 bg-white border-r p-6 hidden md:block">
-                <h2 className="text-xl font-bold text-teal-900 mb-8">DermaDX Doctor</h2>
+                <h2 className="text-xl font-bold text-teal-900 mb-8">AyurVision Doctor</h2>
                 <ul className="space-y-4 text-slate-600 font-medium">
                     <li className="text-teal-600">Patient Management</li>
                     <li>Analytics</li>
