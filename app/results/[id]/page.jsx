@@ -244,7 +244,7 @@ export default function ReportResult({ params }) {
                     <div className="space-y-6 lg:col-span-2">
 
                         <div className="bg-white rounded-2xl border border-slate-200 p-6 lg:p-8 shadow-sm">
-                            <h2 className="font-bold text-xl text-green-900 mb-4 flex items-center gap-2"><span className="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-sm">1</span> Diagnosis Overview</h2>
+                            <h2 className="font-bold text-xl text-green-900 mb-4 flex items-center gap-2"><span className="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-sm">1</span> Overview</h2>
                             <p className="text-slate-600 leading-relaxed text-sm md:text-base">{report.summary?.overview}</p>
                         </div>
 
