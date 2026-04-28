@@ -38,6 +38,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, reportId: newReport._id });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Diagnosis failed" }, { status: 500 });
+    return NextResponse.json({ error: "Analysis failed" }, { status: 500 });
   }
 }

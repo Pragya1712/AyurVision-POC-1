@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "AyurVision",
-  description: "Next-Gen Ayurvedic AI Diagnosis",
+  description: "Next-Gen Ayurvedic AI Analysis",
 };
 
 export default function RootLayout({ children }) {
