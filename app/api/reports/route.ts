@@ -1,36 +1,3 @@
-// import { NextResponse } from "next/server";
-// import { connectToDatabase } from "@/lib/mongodb";
-// import PatientRecord from "@/lib/models/PatientRecord";
-
-// export async function GET(req: Request) {
-//   try {
-//     await connectToDatabase();
-
-//     const { searchParams } = new URL(req.url);
-//     const userId = searchParams.get("userId");
-
-//     if (!userId) {
-//       return NextResponse.json(
-//         { success: false, message: "User ID is required" },
-//         { status: 400 },
-//       );
-//     }
-
-//     // Fetch all records for this user, excluding the massive image strings to speed up load times
-//     const records = await PatientRecord.find({ userId })
-//       .select("-images")
-//       .sort({ createdAt: -1 });
-
-//     return NextResponse.json({ success: true, data: records });
-//   } catch (error) {
-//     console.error("Fetch Reports Error:", error);
-//     return NextResponse.json(
-//       { success: false, message: "Server error" },
-//       { status: 500 },
-//     );
-//   }
-// }
-
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import PatientRecord from "@/lib/models/PatientRecord";
