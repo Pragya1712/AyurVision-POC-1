@@ -99,7 +99,7 @@ export default function ReportResult({ params }) {
         addWrappedText(`Patient: ${dbRecord.demographics.age} years | ${dbRecord.demographics.gender} | ${dbRecord.demographics.city}`, false, 10);
         y += 5;
 
-        addWrappedText("1. Diagnosis Overview", true, 14);
+        addWrappedText("1. Overview", true, 14);
         addWrappedText(report.summary.overview);
         y += 5;
 
