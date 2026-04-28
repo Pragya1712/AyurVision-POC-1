@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     record.markModified("answers");
 
     // 3. Prepare the Gemini Prompt
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+    // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     const prompt = `
       You are an expert Ayurvedic Doctor (Vaidya) analyzing a skin condition. 
@@ -104,8 +104,57 @@ export async function POST(req: Request) {
     }
 
     // 4. Call Gemini
-    const result = await model.generateContent([prompt, ...imageParts]);
-    const responseText = result.response.text();
+    // const result = await model.generateContent([prompt, ...imageParts]);
+    // const responseText = result.response.text();
+
+    // --- 2. THE SMART SWITCHER LOGIC ---
+    let responseText = "";
+
+    try {
+      // 🛑 ATTEMPT 1: Primary API Key
+      const genAI = new GoogleGenerativeAI(
+        process.env.NEXT_PUBLIC_GEMINI_API_KEY || "",
+      );
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash-lite",
+      });
+
+      const result = await model.generateContent([prompt, ...imageParts]);
+      responseText = result.response.text();
+    } catch (error) {
+      // FIX: Cast to a specific shape instead of 'any' to make the ESLint linter happy!
+      const primaryError = error as { message?: string; status?: number };
+
+      console.warn("Primary API Failed:", primaryError.message);
+
+      // Check for 429 Rate Limit
+      if (
+        primaryError.message?.includes("429") ||
+        primaryError.status === 429
+      ) {
+        console.log("Rate limit hit! Switching to Backup API Key...");
+        try {
+          // 🟢 ATTEMPT 2: Backup API Key
+          const backupGenAI = new GoogleGenerativeAI(
+            process.env.GEMINI_API_KEY_BACKUP || "",
+          );
+          const backupModel = backupGenAI.getGenerativeModel({
+            model: "gemini-2.5-flash-lite",
+          });
+
+          const backupResult = await backupModel.generateContent([
+            prompt,
+            ...imageParts,
+          ]);
+          responseText = backupResult.response.text();
+        } catch (backupError) {
+          throw new Error("Both API keys failed or rate limited.");
+        }
+      } else {
+        // If it's a 500/503, throw immediately to trigger frontend popup
+        throw new Error("AI_OVERLOAD"); // Just throw the original error here
+      }
+    }
 
     // 5. Bulletproof Regex to extract ONLY the JSON object
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
@@ -124,6 +173,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Final Generation Error:", error);
+    if (error instanceof Error && error.message === "AI_OVERLOAD") {
+      return NextResponse.json(
+        {
+          success: false,
+          errorType: "AI_SERVER_OVERLOADED",
+          message: "The AI server is experiencing huge traffic.",
+        },
+        { status: 503 },
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Failed to generate final report." },
       { status: 500 },

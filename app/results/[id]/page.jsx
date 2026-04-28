@@ -48,6 +48,11 @@ export default function ReportResult({ params }) {
                 if (!res.ok) throw new Error("Failed to fetch report");
 
                 const data = await res.json();
+                if (res.status === 503 || data.errorType === "AI_OVERLOADED") {
+                    setAiOverloadError(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll up to see the error
+                    return;
+                }
                 if (data.success && data.data && data.data.finalReport) {
                     setDbRecord(data.data);
                     setReport(data.data.finalReport);

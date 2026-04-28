@@ -3,12 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Leaf, UploadCloud, X, EyeOff, Eye, CheckCircle2 } from "lucide-react";
+import { Leaf, UploadCloud, X, EyeOff, Eye, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
 export default function DiagnosisPage() {
     const router = useRouter();
 
@@ -17,7 +16,7 @@ export default function DiagnosisPage() {
     const [originalFaceImage, setOriginalFaceImage] = useState(null);
     const [faceImage, setFaceImage] = useState(null);
     const [tongueImage, setTongueImage] = useState(null);
-
+    const [aiOverloadError, setAiOverloadError] = useState(false);
     // Blur Logic States
     const [isBlurred, setIsBlurred] = useState(false);
     const [isDetecting, setIsDetecting] = useState(false);
@@ -203,6 +202,7 @@ export default function DiagnosisPage() {
         setLoading(true);
         setApiError("");
         setErrors({});
+        setAiOverloadError(false);
 
         try {
             const res = await fetch("/api/generate-questions", {
@@ -212,6 +212,12 @@ export default function DiagnosisPage() {
             });
 
             const data = await res.json();
+            // 🛑 NEW: Catch the AI Overload error
+            if (res.status === 503 || data.errorType === "AI_OVERLOADED") {
+                setAiOverloadError(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll up to see the error
+                return;
+            }
             if (data.success) {
                 setGeneratedQuestions(data.questions);
                 setRecordId(data.recordId);
@@ -237,6 +243,7 @@ export default function DiagnosisPage() {
 
     const handleSubmitFinalAnswers = async () => {
         setLoading(true);
+        setAiOverloadError(false);
         try {
             const res = await fetch("/api/generate-report", {
                 method: "POST",
@@ -244,6 +251,12 @@ export default function DiagnosisPage() {
                 body: JSON.stringify({ recordId, answers }),
             });
             const data = await res.json();
+            // 🛑 NEW: Catch the AI Overload error
+            if (res.status === 503 || data.errorType === "AI_SERVER_OVERLOADED") {
+                setAiOverloadError(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll up to see the error
+                return;
+            }
             if (data.success) {
                 router.push(`/results/${recordId}`);
             } else {
@@ -285,6 +298,31 @@ export default function DiagnosisPage() {
                     <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md font-medium shadow-sm flex items-center justify-between sticky top-24 z-40 animate-in fade-in slide-in-from-top-4">
                         <span>{apiError}</span>
                         <button onClick={() => setApiError("")} className="text-red-500 hover:text-red-700"><X className="w-5 h-5" /></button>
+                    </div>
+                )}
+
+                {/* 🛑 NEW: AI OVERLOAD WARNING BANNER */}
+                {aiOverloadError && (
+                    <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-xl shadow-sm mb-6 animate-in fade-in slide-in-from-top-2 sticky top-24 z-40">
+                        <div className="flex items-start gap-4">
+                            <div className="bg-amber-100 p-2 rounded-full flex-shrink-0">
+                                <AlertTriangle className="w-6 h-6 text-amber-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-amber-900 text-lg mb-1">
+                                    High Traffic Volume
+                                </h3>
+                                <p className="text-amber-800 text-sm leading-relaxed">
+                                    Our AI servers are currently experiencing unusually high traffic and could not process your request right now. Please wait a few moments and try submitting again.
+                                </p>
+                                <button
+                                    onClick={() => setAiOverloadError(false)}
+                                    className="mt-3 text-sm font-semibold text-amber-700 hover:text-amber-900 transition-colors"
+                                >
+                                    Dismiss
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
