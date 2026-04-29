@@ -118,6 +118,10 @@ export default function ReportResult({ params }) {
 
         addWrappedText("2. Dosha Imbalance", true, 14);
         addWrappedText(`Vata: ${report.doshas.vata}% | Pitta: ${report.doshas.pitta}% | Kapha: ${report.doshas.kapha}%`);
+        if (report.imbalance_explanation) {
+            y += 2; // small gap
+            addWrappedText(`Analysis: ${report.imbalance_explanation}`, false, 11);
+        }
         y += 5;
 
         addWrappedText("3. Ayurvedic Conditions", true, 14);
@@ -153,6 +157,18 @@ export default function ReportResult({ params }) {
     const handleLogout = () => {
         if (typeof window !== "undefined") window.localStorage.removeItem("ayurUser");
         router.push("/auth");
+    };
+    // --- HELPER LOGIC FOR DOSHA METER ---
+    const getDoshaLevel = (value) => {
+        if (value <= 35) return { text: "Normal", color: "text-green-600 bg-green-50 px-2 py-0.5 rounded" };
+        if (value <= 50) return { text: "Mildly Elevated", color: "text-amber-600 bg-amber-50 px-2 py-0.5 rounded" };
+        return { text: "Highly Imbalanced", color: "text-red-600 bg-red-50 px-2 py-0.5 rounded" };
+    };
+
+    const doshaInfo = {
+        vata: "Vata (Air & Space): Governs movement and nervous system. Imbalance causes dryness, anxiety, or irregular digestion.",
+        pitta: "Pitta (Fire & Water): Governs metabolism. Imbalance causes heat, inflammation, redness, or acidity.",
+        kapha: "Kapha (Earth & Water): Governs structure & immunity. Imbalance causes oiliness, congestion, or weight gain."
     };
 
     if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center text-green-700 font-medium animate-pulse">Loading Ayurvedic Insights...</div>;
@@ -229,20 +245,78 @@ export default function ReportResult({ params }) {
 
                         <div className="bg-green-50/50 rounded-2xl border border-green-100 p-6 shadow-sm print:break-inside-avoid">
                             <h2 className="font-bold text-lg text-slate-800 mb-6 flex items-center gap-2"><Activity className="w-5 h-5 text-green-600" /> Dosha Meter</h2>
-                            <div className="space-y-5">
+                            <div className="space-y-6">
+                                {/* VATA */}
                                 <div>
-                                    <div className="flex justify-between text-sm font-bold mb-1"><span className="text-purple-700">Vata</span><span className="text-slate-600">{report.doshas.vata || 0}%</span></div>
+                                    <div className="flex justify-between items-center text-sm mb-1.5">
+                                        <div className="flex items-center gap-1.5 font-bold">
+                                            <span className="text-purple-700">Vata</span>
+                                            <div className="group relative flex items-center">
+                                                <Info className="w-4 h-4 text-slate-400 cursor-help hover:text-purple-600 transition-colors" />
+                                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-2.5 bg-slate-800 text-white text-xs font-normal rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
+                                                    {doshaInfo.vata}
+                                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider ${getDoshaLevel(report.doshas.vata).color}`}>{getDoshaLevel(report.doshas.vata).text}</span>
+                                            <span className="text-slate-700 font-bold">{report.doshas.vata || 0}%</span>
+                                        </div>
+                                    </div>
                                     <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden"><div className="bg-purple-500 h-2.5 rounded-full" style={{ width: `${report.doshas.vata || 0}%` }}></div></div>
                                 </div>
+
+                                {/* PITTA */}
                                 <div>
-                                    <div className="flex justify-between text-sm font-bold mb-1"><span className="text-red-600">Pitta</span><span className="text-slate-600">{report.doshas.pitta || 0}%</span></div>
+                                    <div className="flex justify-between items-center text-sm mb-1.5">
+                                        <div className="flex items-center gap-1.5 font-bold">
+                                            <span className="text-red-600">Pitta</span>
+                                            <div className="group relative flex items-center">
+                                                <Info className="w-4 h-4 text-slate-400 cursor-help hover:text-red-600 transition-colors" />
+                                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-2.5 bg-slate-800 text-white text-xs font-normal rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
+                                                    {doshaInfo.pitta}
+                                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider ${getDoshaLevel(report.doshas.pitta).color}`}>{getDoshaLevel(report.doshas.pitta).text}</span>
+                                            <span className="text-slate-700 font-bold">{report.doshas.pitta || 0}%</span>
+                                        </div>
+                                    </div>
                                     <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden"><div className="bg-red-500 h-2.5 rounded-full" style={{ width: `${report.doshas.pitta || 0}%` }}></div></div>
                                 </div>
+
+                                {/* KAPHA */}
                                 <div>
-                                    <div className="flex justify-between text-sm font-bold mb-1"><span className="text-green-700">Kapha</span><span className="text-slate-600">{report.doshas.kapha || 0}%</span></div>
+                                    <div className="flex justify-between items-center text-sm mb-1.5">
+                                        <div className="flex items-center gap-1.5 font-bold">
+                                            <span className="text-green-700">Kapha</span>
+                                            <div className="group relative flex items-center">
+                                                <Info className="w-4 h-4 text-slate-400 cursor-help hover:text-green-600 transition-colors" />
+                                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-2.5 bg-slate-800 text-white text-xs font-normal rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
+                                                    {doshaInfo.kapha}
+                                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider ${getDoshaLevel(report.doshas.kapha).color}`}>{getDoshaLevel(report.doshas.kapha).text}</span>
+                                            <span className="text-slate-700 font-bold">{report.doshas.kapha || 0}%</span>
+                                        </div>
+                                    </div>
                                     <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden"><div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${report.doshas.kapha || 0}%` }}></div></div>
                                 </div>
                             </div>
+
+                            {/* NEW: AI Explanation Box */}
+                            {report.imbalance_explanation && (
+                                <div className="mt-6 p-4 bg-white rounded-xl border border-green-100 text-sm text-slate-700 leading-relaxed shadow-sm">
+                                    <strong className="text-green-900 block mb-1">Analysis Rationale:</strong>
+                                    {report.imbalance_explanation}
+                                </div>
+                            )}
                         </div>
                     </div>
 

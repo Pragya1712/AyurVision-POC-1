@@ -41,6 +41,8 @@ export async function POST(req: Request) {
       ⚠️ CRITICAL INSTRUCTIONS:
       - Respond with ONLY valid JSON — no markdown, no explanation outside the JSON object.
       - DOSHA CALCULATION: Calculate Vata, Pitta, Kapha percentages dynamically (60% visual, 40% Q&A). They MUST sum to exactly 100.
+      - NORMAL DIAGNOSIS: If the skin and tongue appear completely healthy with no symptoms, it is strictly valid to diagnose as "Normal" or "Balanced" with a relatively even Dosha split (e.g., 33/33/34).
+      - IMBALANCE EXPLANATION: You MUST provide a specific 1-2 sentence explanation of WHY the specific dosha(s) are elevated based on the visual and textual evidence. (e.g., "Pitta and Kapha are imbalanced due to visible red inflammation on the cheeks and reported oiliness.")
       - DIAGNOSIS CONFIDENCE: Calculate a dynamic integer (0-100) reflecting your certainty.
       - TONGUE ANALYSIS (Jihva Pariksha): If a tongue image is provided, analyze its coating, color, and moisture dynamically. State clearly if the tongue is healthy or imbalanced. If Ama (toxins) or poor Agni (digestion) are visible, you MUST include specific remedies (like tongue scraping, warm water, digestive spices) in the "recommendations" and "daily_routine" sections.
       - Always provide EXACTLY 3 diagnoses.
@@ -49,12 +51,13 @@ export async function POST(req: Request) {
       {
         "reportId": "AYU-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}",
         "doshas": { "vata": <calculated_integer>, "pitta": <calculated_integer>, "kapha": <calculated_integer> },
+        "imbalance_explanation": "Specific reason for the dosha calculation based on visual and textual evidence...",
         "tongue_analysis": {
           "provided": <boolean_true_if_tongue_image_exists>,
           "observations": ["Dynamic observation 1 (e.g., yellowish coating at the base)", "Dynamic observation 2"],
           "agni_state": "Assessment of digestive fire. If healthy, state it.",
           "ama_state": "Assessment of toxins. If none, state the tongue is clear.",
-          "dosha_correlation": "Explain how the tongue findings match or differ from the facial skin Dosha imbalance. (e.g., 'The Pitta heat on the face is confirmed by the red tip of the tongue')."
+          "dosha_correlation": "Explain how the tongue findings match or differ from the facial skin Dosha imbalance."
         },
         "diagnoses": [
           { "condition": "Primary Condition", "confidence": <calculated_integer>, "description": "Explanation" },
