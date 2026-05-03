@@ -1177,7 +1177,7 @@ function QuestionnaireView({ questions, answers, loading, isComplete, onSelect, 
                     <CheckCircle2 className="h-7 w-7" />
                 </div>
                 <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#6B6B6B]">Generated Questions</p>
-                <h1 className="font-display text-4xl font-semibold text-[#2F2F2F]">AI assessment questions</h1>
+                <h1 className="font-display text-4xl font-semibold text-[#2F2F2F]">Complete the Questionnaire</h1>
                 <p className="mt-4 text-base leading-8 text-[#6B6B6B]">Answer each personalized question to generate your report.</p>
             </header>
 
