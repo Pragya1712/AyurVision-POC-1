@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -11,7 +11,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 160 69% 36%; /* Teal 600 */
-    --primary-foreground: 210 40% 98%;
+    /* --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -23,8 +23,8 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 160 69% 36%; /* Teal 600 */
-    --radius: 0.5rem;
-  }
+    /* --radius: 0.5rem; */ 
+  /* }
 }
 
 @layer base {
@@ -33,5 +33,77 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+} */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 32 36% 95%;
+    --foreground: 0 0% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
+    --primary: 146 33% 56%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 30 59% 63%;
+    --secondary-foreground: 0 0% 18%;
+    --muted: 33 32% 91%;
+    --muted-foreground: 0 0% 42%;
+    --accent: 35 80% 91%;
+    --accent-foreground: 28 60% 39%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 31 24% 86%;
+    --input: 31 24% 86%;
+    --ring: 146 33% 56%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans), sans-serif;
+    letter-spacing: 0;
+  }
+
+  ::selection {
+    background: #E4F1EA;
+    color: #2F2F2F;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-playfair), serif;
+  }
+
+  .av-section {
+    @apply px-5 py-20 sm:px-8 lg:py-24;
+  }
+
+  .av-shell {
+    @apply mx-auto max-w-6xl;
+  }
+
+  .av-card {
+    @apply rounded-3xl border border-[#E4DCD2] bg-white shadow-[0_2px_12px_rgba(47,47,47,0.06)];
+  }
+
+  .av-transition {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
